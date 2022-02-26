@@ -12,7 +12,8 @@ public class RangeTest {
     private Range refRange;
     private Range testRange;
     private Range smallestRange;
-    
+	private Range nanRange;
+
     @BeforeClass public static void setUpBeforeClass() throws Exception {
     }
 
@@ -24,8 +25,13 @@ public class RangeTest {
         extraneousMinRange = new Range(-Double.MIN_VALUE, 1);
     	refRange = new Range (-8.0, 16.0);
     	smallestRange = new Range(0.0, Double.MIN_VALUE);
-  
     }
+
+	@Test(expected = IllegalArgumentException.class)
+	public void rangeConstructorLowerBoundGreaterThanUpper() {
+		testRange = new Range(1, -1);
+	}
+
 
     @Test
     public void expandToIncludeValidRangeAboveRange() {
@@ -95,6 +101,20 @@ public class RangeTest {
         assertEquals("The upper bound should be 3", 3, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 1", 1, testRange.getLowerBound(), .000000001d);
     }
+
+	@Test
+	public void shiftValidRangeGreaterThanZeroIncludesZeroBounds() {
+		Range testRange = Range.shift(smallestRange, 1);
+		assertEquals("The upper bound should be " + Double.toString(Double.MIN_VALUE + 1), Double.MIN_VALUE + 1, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be 1", 1, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void shiftValidRangeGreaterThanZeroWithZeroCrossing() {
+		Range testRange = Range.shift(exampleRange, 2, true);
+		assertEquals("The upper bound should be 3.0", 3.0, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be 1.0", 1.0, testRange.getLowerBound(), .000000001d);
+	}
 
     @Test(expected = IllegalArgumentException.class)
     public void shiftNullRangeLessThanZero() {
@@ -359,6 +379,69 @@ public class RangeTest {
 	public void containsMinDoubleValue() {
 		assertTrue("The minimum value of a double is contained within the range from -8.0 to 16.0",
 				refRange.contains(Double.MIN_VALUE));
+	}
+
+	@Test
+	public void getLengthTwo() {
+		assertEquals("The length of the range should be " + 2.0, 2.0, exampleRange.getLength(), .000000001d);
+	}
+
+	@Test
+	public void getCentralValueZero() {
+		assertEquals("The central value of the range should be " + 0, 0, exampleRange.getCentralValue(), .000000001d);
+	}
+
+	@Test
+	public void equalsInvalidRange() {
+		String test = "testing";
+		assertFalse("The comparator range is not an object of type range", exampleRange.equals(test));
+	}
+
+	@Test
+	public void equalsSameUpperDifferentLower() {
+		testRange = new Range(-2, 1);
+		assertFalse("The ranges have different lower bounds", exampleRange.equals(testRange));
+	}
+
+	@Test
+	public void equalsDifferentUpperSameLower() {
+		testRange = new Range(-1, 2);
+		assertFalse("The ranges have different upper bounds", exampleRange.equals(testRange));
+	}
+
+	@Test
+	public void equalsSameUpperSameLower() {
+		testRange = new Range(-1, 1);
+		assertTrue("The ranges have the same bounds", exampleRange.equals(testRange));
+	}
+
+	@Test
+	public void isNanRangeValidLowerInvalidUpper() {
+		nanRange = new Range(-1, Double.NaN);
+		assertFalse("The range only has an upper value that is NaN", nanRange.isNaNRange());
+	}
+
+	@Test
+	public void isNanRangeInvalidLowerValidUpper() {
+		nanRange = new Range(Double.NaN, 1);
+		assertFalse("The range only has an lower value that is NaN", nanRange.isNaNRange());
+	}
+
+	@Test
+	public void isNanRangeInvalidLowerInvalidUpper() {
+		nanRange = new Range(Double.NaN, Double.NaN);
+		assertTrue("The range has an upper and lower value that is NaN", nanRange.isNaNRange());
+	}
+
+	@Test
+	public void isNanRangeValidLowerValidUpper() {
+		assertFalse("The range has an upper value that is NaN", exampleRange.isNaNRange());
+	}
+
+	@Test
+	public void toStringKnownRange() {
+		String test = exampleRange.toString();
+		assertEquals("Should return 'Range[-1.0,1.0]'", test.toString(), "Range[-1.0,1.0]");
 	}
 
 	@After
