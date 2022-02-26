@@ -32,6 +32,100 @@ public class RangeTest {
 		testRange = new Range(1, -1);
 	}
 
+	@Test
+	public void constrainValueAboveUpper() {
+		assertEquals("The constrained value should be 1.0", 1.0, exampleRange.constrain(2.0), .000000001d);
+	}
+
+	@Test
+	public void constrainValueBelowLower() {
+		assertEquals("The constrained value should be -1.0", -1.0, exampleRange.constrain(-3.0), .000000001d);
+	}
+
+	@Test
+	public void constrainContainsValue() {
+		assertEquals("The constrained value should be 0.5", 0.5, exampleRange.constrain(0.5), .000000001d);
+	}
+
+	@Test
+	public void combineNullAndValidRange() {
+		testRange = Range.combine(null, exampleRange);
+		assertEquals("The upper bound should be 1", 1, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -1", -1, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineNullAndInvalidRange() {
+		testRange = Range.combine(higherRange, null);
+		assertEquals("The upper bound should be 4", 4, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be 4", 2, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineValidRanges() {
+		testRange = Range.combine(exampleRange, higherRange);
+		assertEquals("The upper bound should be 4", 4, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -1", -1, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineIgnoreNaNNullAndValidRange() {
+		testRange = Range.combineIgnoringNaN(null, exampleRange);
+		assertEquals("The upper bound should be 1", 1, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -1", -1, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineIgnoreNaNNullAndNanRange() {
+		nanRange = new Range(Double.NaN, Double.NaN);
+		testRange = Range.combineIgnoringNaN(null, nanRange);
+		assertNull("The test range should be null", testRange);
+	}
+
+	@Test
+	public void combineIgnoreNaNValidRangeAndNull() {
+		testRange = Range.combineIgnoringNaN(higherRange, null);
+		assertEquals("The upper bound should be 4", 4, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be 4", 2, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineIgnoreNaNNaNAndNullRange() {
+		nanRange = new Range(Double.NaN, Double.NaN);
+		testRange = Range.combineIgnoringNaN(nanRange, null);
+		assertNull("The test range should be null", testRange);
+	}
+
+	@Test
+	public void combineIgnoreNaNValidRanges() {
+		nanRange = new Range(Double.NaN, Double.NaN);
+		testRange = Range.combineIgnoringNaN(exampleRange, higherRange);
+		assertEquals("The upper bound should be 4", 4, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -1", -1, testRange.getLowerBound(), .000000001d);
+	}
+
+	@Test
+	public void combineIgnoreNaNNaNRanges() {
+		nanRange = new Range(Double.NaN, Double.NaN);
+		testRange = Range.combineIgnoringNaN(nanRange, nanRange);
+		assertNull("The test range should be null", testRange);
+	}
+
+	@Test
+	public void expandUpperAboveLower() {
+		testRange = Range.expand(higherRange, 2, 4);
+		assertEquals("The upper bound should be 12.0", 12, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -2", -2, testRange.getLowerBound(), .000000001d);
+
+	}
+
+	@Test
+	public void expandUpperBelowLower() {
+		testRange = Range.expand(exampleRange, 4, -6);
+		assertEquals("The upper bound should be -10", -10, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be -10", -10, testRange.getLowerBound(), .000000001d);
+
+	}
 
     @Test
     public void expandToIncludeValidRangeAboveRange() {
@@ -331,11 +425,16 @@ public class RangeTest {
 	}
 
 	@Test
-	public void interesectsMinDoubleValToMaxDoubleValRangeArg() {
+	public void intersectsMinDoubleValToMaxDoubleValRangeArg() {
 		testRange = new Range(Double.MIN_VALUE, Double.MAX_VALUE);
 		assertTrue(
 				"The range from MIN_VALUE for double to MAX_VALUE for double intersects with the range from -8.0 to 16.0",
 				refRange.intersects(testRange));
+	}
+
+	@Test
+	public void intersectsInBoundsReverseValues() {
+		assertFalse("Range intersects but provided range is invalid", higherRange.intersects(3, 2));
 	}
 
 	@Test
