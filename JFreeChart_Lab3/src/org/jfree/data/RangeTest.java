@@ -177,28 +177,35 @@ public class RangeTest {
 
     @Test
     public void shiftValidRangeGreaterThanZero() {
-        Range testRange = Range.shift(higherRange, 2);
+        Range testRange = Range.shift(higherRange, 2, false);
+        assertEquals("The upper bound should be 6", 6, testRange.getUpperBound(), .000000001d);
+        assertEquals("The lower bound should be 4", 4, testRange.getLowerBound(), .000000001d);
+    }
+    
+    @Test
+    public void shiftValidRangeGreaterThanZeroTwoParams() {
+        Range testRange = Range.shift(higherRange, 2, false);
         assertEquals("The upper bound should be 6", 6, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 4", 4, testRange.getLowerBound(), .000000001d);
     }
 
     @Test
     public void shiftValidRangeEqualsZero() {
-        Range testRange = Range.shift(exampleRange, 0);
+        Range testRange = Range.shift(exampleRange, 0, false);
         assertEquals("The upper bound should be 1", 1, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be -1", -1, testRange.getLowerBound(), .000000001d);
     }
 
     @Test
     public void shiftValidRangeLessThanZero() {
-        Range testRange = Range.shift(higherRange, -1);
+        Range testRange = Range.shift(higherRange, -1, false);
         assertEquals("The upper bound should be 3", 3, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 1", 1, testRange.getLowerBound(), .000000001d);
     }
 
 	@Test
 	public void shiftValidRangeGreaterThanZeroIncludesZeroBounds() {
-		Range testRange = Range.shift(smallestRange, 1);
+		Range testRange = Range.shift(smallestRange, 1, false);
 		assertEquals("The upper bound should be " + Double.toString(Double.MIN_VALUE + 1), Double.MIN_VALUE + 1, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 1", 1, testRange.getLowerBound(), .000000001d);
 	}
@@ -212,25 +219,25 @@ public class RangeTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shiftNullRangeLessThanZero() {
-        Range testRange = Range.shift(null, -2);
+        Range testRange = Range.shift(null, -2, false);
     }
     
     @Test
     public void shiftValidRangeMinNegativeDoubleValue() {
-        Range testRange = Range.shift(exampleRange, -1 * Double.MIN_VALUE);
+        Range testRange = Range.shift(exampleRange, -1 * Double.MIN_VALUE, false);
         assertEquals("The upper bound should be -1", -1, testRange.getLowerBound(), .000000001d);
     }
 
     @Test
     public void shiftValidRangeMaxDoubleValue() {
-        Range testRange = Range.shift(exampleRange, Double.MAX_VALUE);
+        Range testRange = Range.shift(exampleRange, Double.MAX_VALUE, false);
         assertEquals("The upper bound should be " + Double.toString(Double.MAX_VALUE + 1), Double.MAX_VALUE + 1, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 0", 0, testRange.getLowerBound(), .000000001d);
     }
 
     @Test
     public void shiftValidRangeCrossesZero() {
-        Range testRange = Range.shift(exampleRange, 2);
+        Range testRange = Range.shift(exampleRange, 2, false);
         assertEquals("The upper bound should be 3", 3, testRange.getUpperBound(), .000000001d);
         assertEquals("The lower bound should be 0", 0, testRange.getLowerBound(), .000000001d);
     }
