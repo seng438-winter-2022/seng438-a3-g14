@@ -908,6 +908,14 @@ public class DataUtilitiesTest extends DataUtilities {
     }
     
     @Test
+    public void Clone_NaNArrayData() {
+    	double [][] expected = {{Double.NaN, Double.NaN}};
+    	double [][] result = DataUtilities.clone(expected);
+    	
+    	assertArrayEquals("Clone method returns double 2D array containing {Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}.", result, expected);
+    }
+    
+    @Test
     public void Clone_PositiveInfArrayData() {
     	double [][] expected = {{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY}};
     	double [][] result = DataUtilities.clone(expected);
