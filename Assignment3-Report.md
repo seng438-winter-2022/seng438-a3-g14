@@ -9,9 +9,6 @@
 |                | Risat Haque (30094174)    |
 |                | Amnah Hussain (30095907)    |
 
-(Note that some labs require individual reports while others require one report
-for each group. Please see each lab document for details.)
-
 # 1 Introduction
 
 In this lab, white box testing was utilized to improve on the black-box tests are written in assignment 2, to evaluate the `Range` and `DataUtilities` classes from JFreeChart. Unlike the tests written for black-box testing in assignment 2, the white box tests are written for this lab is written with explicit knowledge of the source code and a focus on ensuring that as many test cases are covered as possible. To do this correctly and ensure that the white box tests written were adequate enough to cover a minimum 90% statement coverage, 70% branch coverage, and 60% condition coverage, all unit tests were evaluated using both EclEmma and JaCoCo. This ensured that multiple types of coverage were used in the assessment of the test suite’s cases. In addition to automated checking of test coverage, individual test coverage metrics were calculated manually for each method using DU-pair coverage. Tests written for this lab were intended to be simple, isolated, and existing in such a quantity that a high percentage of test coverage could be achieved through their
